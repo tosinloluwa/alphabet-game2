@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Alphabet Adventure</string>
+    <string name="title_activity_main">Alphabet Adventure</string>
+    <string name="package_name">com.sylacademy.alphabetadventure</string>
+    <string name="custom_url_scheme">com.sylacademy.alphabetadventure</string>
+</resources>

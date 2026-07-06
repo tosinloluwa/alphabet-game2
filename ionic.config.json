@@ -1,0 +1,7 @@
+{
+  "name": "Alphabet Adventure",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "custom"
+}

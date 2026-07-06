@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Alphabet Adventure 🌟</title>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;900&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Nunito', sans-serif;
+      background: #f0f4ff;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 1.5rem 1rem;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 1.5rem;
+    }
+    header h1 {
+      font-size: 2rem;
+      font-weight: 900;
+      color: #26215C;
+    }
+    header p {
+      font-size: 1rem;
+      color: #534AB7;
+      font-weight: 700;
+    }
+
+    #game {
+      width: 100%;
+      max-width: 480px;
+    }
+
+    /* Scoreboard */
+    #scoreboard {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #fff;
+      border: 1.5px solid #CECBF6;
+      border-radius: 16px;
+      padding: 0.75rem 1.25rem;
+      margin-bottom: 1rem;
+    }
+    .score-label {
+      font-size: 12px;
+      color: #888;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .score-val {
+      font-size: 22px;
+      font-weight: 900;
+      color: #26215C;
+    }
+    #stars { font-size: 20px; letter-spacing: 2px; }
+
+    /* Mode toggle */
+    #mode-toggle {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 1rem;
+    }
+    .mode-btn {
+      flex: 1;
+      padding: 0.55rem 0.25rem;
+      border-radius: 10px;
+      border: 1.5px solid #CECBF6;
+      background: #fff;
+      font-family: 'Nunito', sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+      color: #534AB7;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .mode-btn.active {
+      background: #534AB7;
+      color: #fff;
+      border-color: #534AB7;
+    }
+
+    /* Prompt box */
+    #prompt-box {
+      background: #fff;
+      border: 1.5px solid #CECBF6;
+      border-radius: 16px;
+      padding: 1.5rem 1rem;
+      text-align: center;
+      margin-bottom: 1rem;
+    }
+    #big-letter {
+      font-size: 100px;
+      font-weight: 900;
+      line-height: 1;
+      color: #534AB7;
+      display: block;
+      margin-bottom: 0.25rem;
+    }
+    #word-icon {
+      font-size: 64px;
+      display: none;
+      margin-bottom: 0.5rem;
+    }
+    #prompt-text {
+      font-size: 15px;
+      color: #888;
+      margin-bottom: 0.25rem;
+    }
+    #hint-word {
+      font-size: 20px;
+      font-weight: 900;
+      color: #26215C;
+    }
+    #hint-icon {
+      font-size: 28px;
+      display: block;
+      margin-top: 0.25rem;
+    }
+
+    /* Choice buttons */
+    #choices {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      margin-bottom: 1rem;
+    }
+    .choice-btn {
+      font-family: 'Nunito', sans-serif;
+      font-size: 36px;
+      font-weight: 900;
+      padding: 1rem 0;
+      border-radius: 16px;
+      border: 2px solid #CECBF6;
+      background: #fff;
+      color: #26215C;
+      cursor: pointer;
+      transition: transform 0.12s, background 0.15s;
+    }
+    .choice-btn:hover:not(:disabled) {
+      background: #EEEDFE;
+      transform: scale(1.05);
+    }
+    .choice-btn:active:not(:disabled) { transform: scale(0.97); }
+    .choice-btn.correct {
+      background: #EAF3DE;
+      border-color: #3B6D11;
+      color: #3B6D11;
+    }
+    .choice-btn.wrong {
+      background: #FCEBEB;
+      border-color: #A32D2D;
+      color: #A32D2D;
+    }
+    .choice-btn:disabled { cursor: default; }
+
+    /* Feedback */
+    #feedback {
+      text-align: center;
+      font-size: 22px;
+      font-weight: 900;
+      min-height: 2rem;
+      color: #26215C;
+    }
+
+    #next-btn {
+      display: none;
+      width: 100%;
+      margin-top: 0.75rem;
+      padding: 0.85rem;
+      border-radius: 14px;
+      background: #534AB7;
+      color: #fff;
+      font-family: 'Nunito', sans-serif;
+      font-size: 20px;
+      font-weight: 900;
+      border: none;
+      cursor: pointer;
+      transition: background 0.15s, transform 0.1s;
+    }
+    #next-btn:hover { background: #3C3489; }
+    #next-btn:active { transform: scale(0.98); }
+
+    /* Celebration overlay */
+    #celebrate {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(83,74,183,0.15);
+      align-items: center;
+      justify-content: center;
+      z-index: 99;
+      font-size: 80px;
+      pointer-events: none;
+    }
+    #celebrate.show { display: flex; animation: pop 0.6s ease forwards; }
+    @keyframes pop {
+      0%   { opacity: 0; transform: scale(0.5); }
+      60%  { opacity: 1; transform: scale(1.1); }
+      100% { opacity: 0; transform: scale(1.3); }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>🌟 Alphabet Adventure</h1>
+  <p>Let's learn our ABCs!</p>
+</header>
+
+<div id="game">
+
+  <div id="scoreboard">
+    <div>
+      <div class="score-label">Score</div>
+      <div class="score-val" id="score-display">0</div>
+    </div>
+    <div id="stars">⭐⭐⭐⭐⭐</div>
+    <div>
+      <div class="score-label">Streak</div>
+      <div class="score-val" id="streak-display">0 🔥</div>
+    </div>
+  </div>
+
+  <div id="mode-toggle">
+    <button class="mode-btn active" onclick="setMode('letter')" id="btn-letter">🔤 Find Letter</button>
+    <button class="mode-btn" onclick="setMode('word')" id="btn-word">🖼️ Starts With?</button>
+    <button class="mode-btn" onclick="setMode('upper')" id="btn-upper">🅰️ Big &amp; Small</button>
+  </div>
+
+  <div id="prompt-box">
+    <span id="word-icon"></span>
+    <span id="big-letter">A</span>
+    <div id="prompt-text">Find this letter!</div>
+    <div id="hint-word"></div>
+    <span id="hint-icon"></span>
+  </div>
+
+  <div id="choices"></div>
+  <div id="feedback"></div>
+  <button id="next-btn" onclick="nextQuestion()">Next ➜</button>
+
+</div>
+
+<div id="celebrate">🎉</div>
+
+<script>
+  const ALPHA = [
+    {l:'A', w:'Apple',    e:'🍎'}, {l:'B', w:'Ball',      e:'⚽'},
+    {l:'C', w:'Cat',      e:'🐱'}, {l:'D', w:'Dog',       e:'🐶'},
+    {l:'E', w:'Elephant', e:'🐘'}, {l:'F', w:'Fish',      e:'🐟'},
+    {l:'G', w:'Grapes',   e:'🍇'}, {l:'H', w:'House',     e:'🏠'},
+    {l:'I', w:'Ice cream',e:'🍦'}, {l:'J', w:'Juice',     e:'🧃'},
+    {l:'K', w:'Kite',     e:'🪁'}, {l:'L', w:'Lion',      e:'🦁'},
+    {l:'M', w:'Moon',     e:'🌙'}, {l:'N', w:'Nest',      e:'🪺'},
+    {l:'O', w:'Orange',   e:'🍊'}, {l:'P', w:'Pizza',     e:'🍕'},
+    {l:'Q', w:'Queen',    e:'👑'}, {l:'R', w:'Rainbow',   e:'🌈'},
+    {l:'S', w:'Sun',      e:'☀️'}, {l:'T', w:'Tree',      e:'🌳'},
+    {l:'U', w:'Umbrella', e:'☂️'}, {l:'V', w:'Van',       e:'🚐'},
+    {l:'W', w:'Whale',    e:'🐳'}, {l:'X', w:'Xylophone', e:'🎵'},
+    {l:'Y', w:'Yacht',    e:'⛵'}, {l:'Z', w:'Zebra',     e:'🦓'}
+  ];
+
+  let mode = 'letter', score = 0, streak = 0, current = null, answered = false;
+
+  function shuffle(arr) { return [...arr].sort(() => Math.random() - 0.5); }
+  function pick(arr, n) { return shuffle(arr).slice(0, n); }
+
+  function setMode(m) {
+    mode = m;
+    document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+    const map = { letter: 'btn-letter', word: 'btn-word', upper: 'btn-upper' };
+    document.getElementById(map[m]).classList.add('active');
+    nextQuestion();
+  }
+
+  function nextQuestion() {
+    answered = false;
+    document.getElementById('feedback').textContent = '';
+    document.getElementById('next-btn').style.display = 'none';
+
+    const pool = shuffle(ALPHA);
+    current = pool[0];
+    const distractors = pick(pool.slice(1), 3);
+    const options = shuffle([current, ...distractors]);
+
+    const bigLetter = document.getElementById('big-letter');
+    const wordIcon  = document.getElementById('word-icon');
+    const promptTxt = document.getElementById('prompt-text');
+    const hintWord  = document.getElementById('hint-word');
+    const hintIcon  = document.getElementById('hint-icon');
+
+    hintWord.textContent = '';
+    hintIcon.textContent = '';
+    wordIcon.style.display = 'none';
+    bigLetter.style.display = 'block';
+
+    if (mode === 'letter') {
+      bigLetter.textContent = current.l;
+      promptTxt.textContent = 'Find this letter!';
+      hintWord.textContent  = current.w;
+      hintIcon.textContent  = current.e;
+      renderChoices(options, o => o.l, current.l);
+    } else if (mode === 'word') {
+      wordIcon.style.display = 'block';
+      wordIcon.textContent   = current.e;
+      bigLetter.style.display = 'none';
+      promptTxt.textContent  = current.w + ' — which letter does it start with?';
+      renderChoices(options, o => o.l, current.l);
+    } else {
+      bigLetter.textContent = current.l;
+      promptTxt.textContent = 'Find the small (lowercase) version!';
+      renderChoices(options, o => o.l.toLowerCase(), current.l.toLowerCase());
+    }
+  }
+
+  function renderChoices(options, labelFn, correct) {
+    const box = document.getElementById('choices');
+    box.innerHTML = '';
+    options.forEach(opt => {
+      const btn = document.createElement('button');
+      btn.className = 'choice-btn';
+      btn.textContent = labelFn(opt);
+      btn.setAttribute('aria-label', 'Letter ' + labelFn(opt));
+      btn.onclick = () => handleAnswer(btn, labelFn(opt), correct);
+      box.appendChild(btn);
+    });
+  }
+
+  function handleAnswer(btn, chosen, correct) {
+    if (answered) return;
+    answered = true;
+
+    document.querySelectorAll('.choice-btn').forEach(b => {
+      b.disabled = true;
+      if (b.textContent === correct) b.classList.add('correct');
+    });
+
+    const fb = document.getElementById('feedback');
+    if (chosen === correct) {
+      btn.classList.add('correct');
+      score += 10; streak++;
+      fb.textContent = ['Great job! 🎉', 'Awesome! ⭐', 'Super! 🌟', 'Well done! 🏆'][Math.floor(Math.random()*4)];
+      playBeep(true);
+      showCelebration();
+    } else {
+      btn.classList.add('wrong');
+      streak = 0;
+      fb.textContent = `The answer is "${correct}" 😊 Keep trying!`;
+      playBeep(false);
+    }
+
+    document.getElementById('score-display').textContent = score;
+    document.getElementById('streak-display').textContent = streak + (streak > 0 ? ' 🔥' : '');
+    updateStars();
+    document.getElementById('next-btn').style.display = 'block';
+  }
+
+  function updateStars() {
+    const s = Math.min(5, streak);
+    document.getElementById('stars').textContent = '⭐'.repeat(s) + '☆'.repeat(5 - s);
+  }
+
+  function showCelebration() {
+    const el = document.getElementById('celebrate');
+    const emojis = ['🎉','🌟','🏆','✨','🎊'];
+    el.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+    el.classList.add('show');
+    setTimeout(() => el.classList.remove('show'), 700);
+  }
+
+  function playBeep(isCorrect) {
+    try {
+      const ctx = new (window.AudioContext || window.webkitAudioContext)();
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.connect(gain); gain.connect(ctx.destination);
+      osc.frequency.value = isCorrect ? 660 : 220;
+      osc.type = 'sine';
+      gain.gain.setValueAtTime(0.3, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.4);
+      osc.start(); osc.stop(ctx.currentTime + 0.4);
+    } catch (e) {}
+  }
+
+  nextQuestion();
+</script>
+
+</body>
+</html>

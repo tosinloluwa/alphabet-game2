@@ -1,0 +1,23 @@
+{
+  "name": "game-final",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "ionic:build": "echo 'web assets ready'",
+    "build": "node ./node_modules/@capacitor/cli/dist/index.js sync android"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@capacitor/core": "^8.4.1"
+  },
+  "devDependencies": {
+    "@capacitor/android": "^8.4.1",
+    "@capacitor/cli": "^8.4.1",
+    "@ionic/cli": "^7.2.1",
+    "@ionic/core": "^8.8.12"
+  }
+}
